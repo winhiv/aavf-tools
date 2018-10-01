@@ -16,6 +16,8 @@ specific language governing permissions and limitations under the License.
 """
 
 import os
+import click
+
 from collections import defaultdict
 import PyAAVF.parser as parser
 from Asi.XML.XmlAsiTransformer import XmlAsiTransformer
@@ -23,16 +25,17 @@ from Asi.Grammar.StringMutationComparator import StringMutationComparator
 
 """
 Takes as an input an AAVF file and outputs a csv file indicating the
-drug resistance levels for each drug defined in the ASI file.
+drug resistance levels for each drug defined in the input ASI file.
 """
 
-TEST_PATH = os.path.dirname(os.path.abspath(__file__))
-aavf_input_name = "sample"
 
-aavf_input = TEST_PATH + ('/%s.aavf' % aavf_input_name)
-xml_input = TEST_PATH + '/sample.xml'
-
-def main():
+@click.command()
+@click.option('-a', '--aavf_input',
+                type=click.Path(exists=True, file_okay=True, dir_okay=False))
+@click.option('-x', '--xml_input',
+                type=click.Path(exists=True, file_okay=True, dir_okay=False))
+@click.option('-o', '--output', type=click.File('w'))
+def determine_resistances(aavf_input, xml_input, output):
     """
     Parse aavf file to AAVF object.
     Create XmlAsiTransformer.
@@ -40,18 +43,37 @@ def main():
     AAVF object mutations.
     Output drug resistance. 
     """
+    
+    # default input and output values
+    TEST_PATH = os.path.dirname(os.path.abspath(__file__))
+    aavf_name = "sample"
 
-    reader = parser.Reader(aavf_input)
+    aavf_file = TEST_PATH + ('/%s.aavf' % aavf_name)
+    xml_file = TEST_PATH + '/sample.xml'
+    output_path = ("%s_resistance_levels.csv" % aavf_name)
+    # default input and output values
+
+    if aavf_input:
+        aavf_file = aavf_input
+
+    if xml_input:
+        xml_file = xml_input
+
+    reader = parser.Reader(aavf_file)
     aavf_obj = reader.read_records()
     records = list(aavf_obj)
     mutations = defaultdict(list) # parse mutations from records
 
     transformer = XmlAsiTransformer(True)
-    fd = open(xml_input, "r")
+    fd = open(xml_file, "r")
     genes = transformer.transform(fd)
     comparator = StringMutationComparator(True)
 
-    output_file = open(("%s_resistance_levels.csv" % aavf_input_name), "w")
+    if output:
+        output_file = output
+    else:
+        output_file = open(output_file, "w")
+    
     output_file.write("#gene,drug class,drug,resistance level\n")
 
     # create mutations list
@@ -76,4 +98,7 @@ def main():
                     print(output_string)
                     output_file.write(output_string)
 
-main()
+    output_file.close()
+
+if __name__ == '__main__':
+    determine_resistances()
