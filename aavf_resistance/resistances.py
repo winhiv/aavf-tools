@@ -1,7 +1,8 @@
 """
 Copyright Government of Canada 2018
 
-Written by: Camy Tran, National Microbiology Laboratory, Public Health Agency of Canada
+Written by: Camy Tran, National Microbiology Laboratory, Public Health Agency
+of Canada
 
 Licensed under the Apache License, Version 2.0 (the "License"); you may not use
 this work except in compliance with the License. You may obtain a copy of the
@@ -48,9 +49,9 @@ def determine_resistances(aavf_input, xml_input, output):
     TEST_PATH = os.path.dirname(os.path.abspath(__file__))
     aavf_name = "sample"
 
-    aavf_file = TEST_PATH + ('/%s.aavf' % aavf_name)
-    xml_file = TEST_PATH + '/sample.xml'
-    output_path = ("%s_resistance_levels.csv" % aavf_name)
+    aavf_file = TEST_PATH + ('/data/%s.aavf' % aavf_name)
+    xml_file = TEST_PATH + '/data/sample.xml'
+    output_path = TEST_PATH + ("/output/%s_resistance_levels.csv" % aavf_name)
     # default input and output values
 
     if aavf_input:
@@ -72,7 +73,7 @@ def determine_resistances(aavf_input, xml_input, output):
     if output:
         output_file = output
     else:
-        output_file = open(output_file, "w")
+        output_file = open(output_path, "w")
     
     output_file.write("#gene,drug class,drug,resistance level\n")
 
