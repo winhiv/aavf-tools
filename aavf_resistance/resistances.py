@@ -31,7 +31,7 @@ TEST_PATH = os.path.dirname(os.path.abspath(__file__))
 aavf_input = TEST_PATH + '/sample.aavf'
 xml_input = TEST_PATH + '/sample.xml'
 
-def determine_resistance_levels():
+def main():
     """
     Parse aavf file to AAVF object.
     Create XmlAsiTransformer.
@@ -48,37 +48,30 @@ def determine_resistance_levels():
     transformer = XmlAsiTransformer(True)
     fd = open(xml_input, "r")
     genes = transformer.transform(fd)
-    evaluated_genes = {}
     comparator = StringMutationComparator(True)
 
-    output_obj = defaultdict(lambda: defaultdict(list))
-
-    output_file = open("resistance_levels.csv","w")
+    output_file = open("resistance_levels.csv", "w")
     output_file.write("#gene,drug class,drug,resistance level\n")
 
     # create mutations list
     for record in records:
-        mutations[record.GENE].append("%s%s" % (record.POS, record.REF))
+        if record.ALT[0] != "*":
+            mutations[record.GENE].append("%s%s" % (record.POS, record.ALT[0]))
 
-    for gene in genes:
-        for variant in mutations:
-            evaluated_genes[gene] = genes[gene].evaluate(mutations[variant],
-                                                         comparator)
-    
-    for gene in evaluated_genes:
-        drug_classes = evaluated_genes[gene].get_evaluated_drug_classes()
+    for gene in mutations:
+        evaluated_gene = genes[gene].evaluate(mutations[gene], comparator)
+        drug_classes = evaluated_gene.get_evaluated_drug_classes()
 
         for drug_class in drug_classes:
             for drug in drug_class.get_evaluated_drugs():
-                output_obj[gene][drug_class.get_drug_class()].append(drug)
-
-    for gene in output_obj:
-        for drug_class in output_obj[gene]:
-            for drug in output_obj[gene][drug_class]:
                 for condition in drug.get_evaluated_conditions():
                     definition = next(iter(condition.get_definitions()))
-                    output_string = ("%s,%s,%s,%s\n" % (gene, drug_class.name,
+                    output_string = ("%s,%s,%s,%s\n" % 
+                                     (gene, drug_class.get_drug_class().name,
                                                        drug.get_drug().name,
                                                        definition.get_text()))
+
                     print(output_string)
                     output_file.write(output_string)
+
+main()

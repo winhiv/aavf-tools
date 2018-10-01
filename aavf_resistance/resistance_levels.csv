@@ -1,24 +1,12 @@
 #gene,drug class,drug,resistance level
-IN,INSTI,BICSusceptible
-IN,INSTI,RALSusceptible
-IN,INSTI,DTGSusceptible
-IN,INSTI,EVGSusceptible
-PR,PI,ATV/rPotential Low-Level Resistance
-PR,PI,SQV/rHigh-Level Resistance
-PR,PI,NFVIntermediate Resistance
-PR,PI,TPV/rSusceptible
-PR,PI,FPV/rSusceptible
-PR,PI,DRV/rSusceptible
-PR,PI,IDV/rPotential Low-Level Resistance
-PR,PI,LPV/rPotential Low-Level Resistance
-RT,NRTI,FTCSusceptible
-RT,NRTI,AZTSusceptible
-RT,NRTI,ABCSusceptible
-RT,NRTI,3TCSusceptible
-RT,NRTI,DDISusceptible
-RT,NRTI,TDFSusceptible
-RT,NRTI,D4TSusceptible
-RT,NNRTI,RPVSusceptible
-RT,NNRTI,ETRSusceptible
-RT,NNRTI,EFVSusceptible
-RT,NNRTI,NVPSusceptible
+RT,NNRTI,NVP,High-Level Resistance
+RT,NNRTI,RPV,Susceptible
+RT,NNRTI,ETR,Susceptible
+RT,NNRTI,EFV,High-Level Resistance
+RT,NRTI,3TC,Susceptible
+RT,NRTI,DDI,Susceptible
+RT,NRTI,TDF,Susceptible
+RT,NRTI,FTC,Susceptible
+RT,NRTI,AZT,Susceptible
+RT,NRTI,D4T,Susceptible
+RT,NRTI,ABC,Susceptible
