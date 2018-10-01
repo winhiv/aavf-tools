@@ -77,7 +77,7 @@ def determine_resistance_levels():
             for drug in output_obj[gene][drug_class]:
                 for condition in drug.get_evaluated_conditions():
                     definition = next(iter(condition.get_definitions()))
-                    output_string = ("%s,%s,%s%s\n" % (gene, drug_class.name,
+                    output_string = ("%s,%s,%s,%s\n" % (gene, drug_class.name,
                                                        drug.get_drug().name,
                                                        definition.get_text()))
                     print(output_string)
