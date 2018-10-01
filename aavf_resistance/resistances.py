@@ -16,7 +16,6 @@ specific language governing permissions and limitations under the License.
 """
 
 import os
-from lxml import etree
 from collections import defaultdict
 import PyAAVF.parser as parser
 from Asi.XML.XmlAsiTransformer import XmlAsiTransformer
@@ -28,7 +27,9 @@ drug resistance levels for each drug defined in the ASI file.
 """
 
 TEST_PATH = os.path.dirname(os.path.abspath(__file__))
-aavf_input = TEST_PATH + '/sample.aavf'
+aavf_input_name = "sample"
+
+aavf_input = TEST_PATH + ('/%s.aavf' % aavf_input_name)
 xml_input = TEST_PATH + '/sample.xml'
 
 def main():
@@ -50,7 +51,7 @@ def main():
     genes = transformer.transform(fd)
     comparator = StringMutationComparator(True)
 
-    output_file = open("resistance_levels.csv", "w")
+    output_file = open(("%s_resistance_levels.csv" % aavf_input_name), "w")
     output_file.write("#gene,drug class,drug,resistance level\n")
 
     # create mutations list
@@ -66,11 +67,12 @@ def main():
             for drug in drug_class.get_evaluated_drugs():
                 for condition in drug.get_evaluated_conditions():
                     definition = next(iter(condition.get_definitions()))
+                    
                     output_string = ("%s,%s,%s,%s\n" % 
                                      (gene, drug_class.get_drug_class().name,
                                                        drug.get_drug().name,
                                                        definition.get_text()))
-
+     
                     print(output_string)
                     output_file.write(output_string)
 

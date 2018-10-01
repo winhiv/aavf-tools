@@ -1,6 +1,6 @@
 #gene,drug class,drug,resistance level
-RT,NNRTI,NVP,High-Level Resistance
 RT,NNRTI,RPV,Susceptible
+RT,NNRTI,NVP,High-Level Resistance
 RT,NNRTI,ETR,Susceptible
 RT,NNRTI,EFV,High-Level Resistance
 RT,NRTI,3TC,Susceptible

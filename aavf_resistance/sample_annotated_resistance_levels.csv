@@ -1,0 +1,16 @@
+#gene,drug class,drug,resistance level
+RT,NRTI,3TC,Susceptible
+RT,NRTI,DDI,Susceptible
+RT,NRTI,TDF,Susceptible
+RT,NRTI,AZT,Susceptible
+RT,NRTI,FTC,Susceptible
+RT,NRTI,D4T,Susceptible
+RT,NRTI,ABC,Susceptible
+RT,NNRTI,NVP,High-Level Resistance
+RT,NNRTI,EFV,High-Level Resistance
+RT,NNRTI,RPV,Susceptible
+RT,NNRTI,ETR,Susceptible
+IN,INSTI,EVG,Intermediate Resistance
+IN,INSTI,RAL,Low-Level Resistance
+IN,INSTI,DTG,Susceptible
+IN,INSTI,BIC,Susceptible
