@@ -1,0 +1,10 @@
+version: 2
+
+jobs:
+    build:
+        working_directory: ~/AAVFResistance
+        docker:
+            - image: thematrix/tox
+        steps:
+            - checkout
+            - run: tox

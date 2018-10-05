@@ -17,12 +17,12 @@ specific language governing permissions and limitations under the License.
 """
 
 import os
-import click
-
 from collections import defaultdict
+import click
 import PyAAVF.parser as parser
 from Asi.XML.XmlAsiTransformer import XmlAsiTransformer
 from Asi.Grammar.StringMutationComparator import StringMutationComparator
+
 
 """
 Takes as an input an AAVF file and outputs a csv file indicating the
@@ -32,26 +32,33 @@ drug resistance levels for each drug defined in the input ASI file.
 
 @click.command()
 @click.option('-a', '--aavf_input',
-                type=click.Path(exists=True, file_okay=True, dir_okay=False))
+              type=click.Path(exists=True, file_okay=True, dir_okay=False))
 @click.option('-x', '--xml_input',
-                type=click.Path(exists=True, file_okay=True, dir_okay=False))
+              type=click.Path(exists=True, file_okay=True, dir_okay=False))
 @click.option('-o', '--output', type=click.File('w'))
 def determine_resistances(aavf_input, xml_input, output):
     """
+    An example tool that queries an aavf file against
+    Stanford HIVdb to determine drug resistance levels
+    for drugs defined in an ASI file.
+
+    By default, this example tool will run on the sample files
+    in aavf_resistance/data, and output to
+    aavf_resistance/output/resistance_levels.csv
+
     Parse aavf file to AAVF object.
     Create XmlAsiTransformer.
     Use transformer to evaluate drug resistance levels in the
     AAVF object mutations.
-    Output drug resistance. 
+    Output drug resistance.
     """
-    
-    # default input and output values
-    TEST_PATH = os.path.dirname(os.path.abspath(__file__))
-    aavf_name = "sample"
 
-    aavf_file = TEST_PATH + ('/data/%s.aavf' % aavf_name)
-    xml_file = TEST_PATH + '/data/sample.xml'
-    output_path = TEST_PATH + ("/output/%s_resistance_levels.csv" % aavf_name)
+    # default input and output values
+    DEFAULT_PATH = os.path.dirname(os.path.abspath(__file__))
+
+    aavf_file = DEFAULT_PATH + '/data/sample.aavf'
+    xml_file = DEFAULT_PATH + '/data/sample.xml'
+    output_path = DEFAULT_PATH + '/output/resistance_levels.csv'
     # default input and output values
 
     if aavf_input:
@@ -60,21 +67,24 @@ def determine_resistances(aavf_input, xml_input, output):
     if xml_input:
         xml_file = xml_input
 
+    print(aavf_file)
+    print(xml_file)
+
     reader = parser.Reader(aavf_file)
     aavf_obj = reader.read_records()
     records = list(aavf_obj)
-    mutations = defaultdict(list) # parse mutations from records
+    mutations = defaultdict(list)  # parse mutations from records
 
     transformer = XmlAsiTransformer(True)
-    fd = open(xml_file, "r")
-    genes = transformer.transform(fd)
+    xml_handler = open(xml_file, "r")
+    genes = transformer.transform(xml_handler)
     comparator = StringMutationComparator(True)
 
     if output:
         output_file = output
     else:
-        output_file = open(output_path, "w")
-    
+        output_file = open(output_path, "w+")
+
     output_file.write("#gene,drug class,drug,resistance level\n")
 
     # create mutations list
@@ -90,16 +100,17 @@ def determine_resistances(aavf_input, xml_input, output):
             for drug in drug_class.get_evaluated_drugs():
                 for condition in drug.get_evaluated_conditions():
                     definition = next(iter(condition.get_definitions()))
-                    
-                    output_string = ("%s,%s,%s,%s\n" % 
+
+                    output_string = ("%s,%s,%s,%s\n" %
                                      (gene, drug_class.get_drug_class().name,
-                                                       drug.get_drug().name,
-                                                       definition.get_text()))
-     
+                                      drug.get_drug().name,
+                                      definition.get_text()))
+
                     print(output_string)
                     output_file.write(output_string)
 
     output_file.close()
+
 
 if __name__ == '__main__':
     determine_resistances()
