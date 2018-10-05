@@ -2,7 +2,7 @@ version: 2
 
 jobs:
     build:
-        working_directory: ~/AAVFResistance
+        working_directory: ~/aavf-tools
         docker:
             - image: thematrix/tox
         steps:
