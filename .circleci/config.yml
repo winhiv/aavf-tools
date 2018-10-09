@@ -4,7 +4,7 @@ jobs:
     build:
         working_directory: ~/aavf-tools
         docker:
-            - image: thematrix/tox
+            - image: themattrix/tox
         steps:
             - checkout
             - run: tox
