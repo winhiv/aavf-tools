@@ -23,7 +23,6 @@ import PyAAVF.parser as parser
 from Asi.XML.XmlAsiTransformer import XmlAsiTransformer
 from Asi.Grammar.StringMutationComparator import StringMutationComparator
 
-
 """
 Takes as an input an AAVF file and outputs a csv file indicating the
 drug resistance levels for each drug defined in the input ASI file.
@@ -39,7 +38,7 @@ DEFAULT_PATH = os.path.dirname(os.path.abspath(__file__))
 @click.option('-x', '--xml_input',
               type=click.Path(exists=True, file_okay=True, dir_okay=False))
 @click.option('-o', '--output', type=click.File('w'))
-def determine_resistances(aavf_input, xml_input, output):
+def determine_resistance_levels(aavf_input, xml_input, output):
     """
     An example tool that queries an aavf file against
     Stanford HIVdb to determine drug resistance levels
@@ -67,6 +66,15 @@ def determine_resistances(aavf_input, xml_input, output):
     if xml_input:
         xml_file = xml_input
 
+    if output:
+        output_path = output
+
+    output_string = output_resistance_levels(aavf_file, xml_file, output_path)
+
+    click.echo(output_string)
+
+
+def output_resistance_levels(aavf_file, xml_file, output_path):
     reader = parser.Reader(aavf_file)
     records = list(reader.read_records())
     mutations = defaultdict(list)  # parse mutations from records
@@ -75,12 +83,15 @@ def determine_resistances(aavf_input, xml_input, output):
     genes = transformer.transform(open(xml_file, "r"))
     comparator = StringMutationComparator(True)
 
-    if output:
-        output_file = output
-    else:
+    output_file = output_path
+
+    # handles the case where the output_path was passed from somewhere
+    # other than to click, from the command line,
+    # e.g. from a test file
+    if isinstance(output_path, str):
         output_file = open(output_path, "w+")
 
-    output_file.write("#gene,drug class,drug,resistance level\n")
+    output_string = "#gene,drug class,drug,resistance level"
 
     # create mutations list
     for record in records:
@@ -96,12 +107,12 @@ def determine_resistances(aavf_input, xml_input, output):
                 for condition in drug.get_evaluated_conditions():
                     definition = next(iter(condition.get_definitions()))
 
-                    output_string = ("%s,%s,%s,%s\n" %
-                                     (gene, drug_class.get_drug_class().name,
-                                      drug.get_drug().name,
-                                      definition.get_text()))
+                    output_string += ("\n%s,%s,%s,%s" %
+                                      (gene, drug_class.get_drug_class().name,
+                                       drug.get_drug().name,
+                                       definition.get_text()))
 
-                    click.echo(output_string)
-                    output_file.write(output_string)
-
+    output_file.write(output_string)
     output_file.close()
+
+    return output_string

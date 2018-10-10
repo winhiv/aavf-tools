@@ -36,7 +36,7 @@ setup(
     dependency_links = ['https://github.com/winhiv/PyAAVF/tarball/master'],
     entry_points='''
         [console_scripts]
-        aavfresistance=aavf_resistance.resistances:determine_resistances
+        aavfresistance=aavf_resistance.resistances:determine_resistance_levels
 
     ''',
     classifiers=[

@@ -16,9 +16,8 @@ specific language governing permissions and limitations under the License.
 """
 
 import os
-from click.testing import CliRunner
 from Asi.Grammar.StringMutationComparator import StringMutationComparator
-
+from aavf_resistance.resistances import output_resistance_levels
 
 TEST_PATH = os.path.dirname(os.path.abspath(__file__))
 AAVF_FILE = TEST_PATH + '/data/sample.aavf'
@@ -34,10 +33,8 @@ class TestAAVFResistance:
         cls.mutation_comparator = StringMutationComparator(cls.strict_comparison)
 
     def test_output_file(self):
-        runner = CliRunner()
-        runner.invoke(aavfresistance, ['-a', AAVF_FILE, '-x-', XML_FILE,
-                      '-o-', OUTPUT_FILE])
-        
+        output_resistance_levels(AAVF_FILE, XML_FILE, OUTPUT_FILE)    
+
         assert os.path.isfile(AAVF_FILE)
         assert os.path.isfile(OUTPUT_FILE)
 
