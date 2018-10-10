@@ -29,6 +29,9 @@ Takes as an input an AAVF file and outputs a csv file indicating the
 drug resistance levels for each drug defined in the input ASI file.
 """
 
+# default input and output values
+DEFAULT_PATH = os.path.dirname(os.path.abspath(__file__))
+
 
 @click.command()
 @click.option('-a', '--aavf_input',
@@ -53,9 +56,6 @@ def determine_resistances(aavf_input, xml_input, output):
     Output drug resistance.
     """
 
-    # default input and output values
-    DEFAULT_PATH = os.path.dirname(os.path.abspath(__file__))
-
     aavf_file = DEFAULT_PATH + '/data/sample.aavf'
     xml_file = DEFAULT_PATH + '/data/sample.xml'
     output_path = DEFAULT_PATH + '/output/resistance_levels.csv'
@@ -67,17 +67,12 @@ def determine_resistances(aavf_input, xml_input, output):
     if xml_input:
         xml_file = xml_input
 
-    print(aavf_file)
-    print(xml_file)
-
     reader = parser.Reader(aavf_file)
-    aavf_obj = reader.read_records()
-    records = list(aavf_obj)
+    records = list(reader.read_records())
     mutations = defaultdict(list)  # parse mutations from records
 
     transformer = XmlAsiTransformer(True)
-    xml_handler = open(xml_file, "r")
-    genes = transformer.transform(xml_handler)
+    genes = transformer.transform(open(xml_file, "r"))
     comparator = StringMutationComparator(True)
 
     if output:
@@ -106,11 +101,7 @@ def determine_resistances(aavf_input, xml_input, output):
                                       drug.get_drug().name,
                                       definition.get_text()))
 
-                    print(output_string)
+                    click.echo(output_string)
                     output_file.write(output_string)
 
     output_file.close()
-
-
-if __name__ == '__main__':
-    determine_resistances()
