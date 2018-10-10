@@ -33,7 +33,7 @@ setup(
     zip_safe=False,
     platforms='any',
     install_requires=dependencies,
-    dependency_links=['git+https://github.com/winhiv/PyAAVF.git#egg=PyAAVF'],
+    dependency_links=['git+https://github.com/winhiv/PyAAVF.git@master#egg=PyAAVF-0'],
     entry_points='''
         [console_scripts]
         aavfresistance=aavf_resistance.resistances:determine_resistance_levels
