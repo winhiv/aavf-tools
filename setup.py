@@ -17,7 +17,7 @@ specific language governing permissions and limitations under the License.
 
 from setuptools import find_packages, setup
 
-dependencies = ['click']
+dependencies = ['click', "PyAAVF"]
 
 setup(
     name='aavf-tools',
@@ -33,6 +33,7 @@ setup(
     zip_safe=False,
     platforms='any',
     install_requires=dependencies,
+    dependency_links=['git+https://github.com/winhiv/PyAAVF#egg=PyAAVF'],
     entry_points='''
         [console_scripts]
         aavfresistance=aavf_resistance.resistances:determine_resistance_levels
