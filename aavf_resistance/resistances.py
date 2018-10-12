@@ -19,14 +19,12 @@ specific language governing permissions and limitations under the License.
 import os
 from collections import defaultdict
 import click
-import PyAAVF.parser as parser
+from PyAAVF import parser
 from Asi.XML.XmlAsiTransformer import XmlAsiTransformer
 from Asi.Grammar.StringMutationComparator import StringMutationComparator
 
-"""
-Takes as an input an AAVF file and outputs a csv file indicating the
-drug resistance levels for each drug defined in the input ASI file.
-"""
+# Takes as an input an AAVF file and outputs a csv file indicating the
+# drug resistance levels for each drug defined in the input ASI file.
 
 # default input and output values
 DEFAULT_PATH = os.path.dirname(os.path.abspath(__file__))
@@ -47,12 +45,6 @@ def determine_resistance_levels(aavf_input, xml_input, output):
     By default, this example tool will run on the sample files
     in aavf_resistance/data, and output to
     aavf_resistance/output/resistance_levels.csv
-
-    Parse aavf file to AAVF object.
-    Create XmlAsiTransformer.
-    Use transformer to evaluate drug resistance levels in the
-    AAVF object mutations.
-    Output drug resistance.
     """
 
     aavf_file = DEFAULT_PATH + '/data/sample.aavf'
@@ -75,13 +67,17 @@ def determine_resistance_levels(aavf_input, xml_input, output):
 
 
 def output_resistance_levels(aavf_file, xml_file, output_path):
-    reader = parser.Reader(aavf_file)
-    records = list(reader.read_records())
-    mutations = defaultdict(list)  # parse mutations from records
+    """
+    Parse aavf file to AAVF object.
+    Create XmlAsiTransformer.
+    Use transformer to evaluate drug resistance levels in the
+    AAVF object mutations.
+    Output drug resistance.
+    """
 
-    transformer = XmlAsiTransformer(True)
-    genes = transformer.transform(open(xml_file, "r"))
-    comparator = StringMutationComparator(True)
+    records = list(parser.Reader(aavf_file).read_records())
+    mutations = defaultdict(list)  # parse mutations from records
+    genes = XmlAsiTransformer(True).transform(open(xml_file, "r"))
 
     output_file = output_path
 
@@ -99,10 +95,10 @@ def output_resistance_levels(aavf_file, xml_file, output_path):
             mutations[record.GENE].append("%s%s" % (record.POS, record.ALT[0]))
 
     for gene in mutations:
-        evaluated_gene = genes[gene].evaluate(mutations[gene], comparator)
-        drug_classes = evaluated_gene.get_evaluated_drug_classes()
+        evaluated_gene = genes[gene].evaluate(mutations[gene],
+                                              StringMutationComparator(True))
 
-        for drug_class in drug_classes:
+        for drug_class in evaluated_gene.get_evaluated_drug_classes():
             for drug in drug_class.get_evaluated_drugs():
                 for condition in drug.get_evaluated_conditions():
                     definition = next(iter(condition.get_definitions()))

@@ -1,1 +1,3 @@
 lxml
+git+https://github.com/winhiv/PyAAVF.git@master#egg=PyAAVF-0
+git+https://github.com/phac-nml/asipython.git@master#egg=asipython-0
