@@ -23,7 +23,7 @@ TEST_PATH = os.path.dirname(os.path.abspath(__file__))
 AAVF_FILE = TEST_PATH + '/data/sample.aavf'
 XML_FILE = TEST_PATH + '/data/sample.xml'
 
-OUTPUT_FILE = TEST_PATH + '/output/sample_resistance_levels.csv'
+OUTPUT_FILE = TEST_PATH + '/sample_resistance_levels.csv'
 
 class TestAAVFResistance:
 
