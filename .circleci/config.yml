@@ -1,0 +1,10 @@
+version: 2
+
+jobs:
+    build:
+        working_directory: ~/aavf-tools
+        docker:
+            - image: themattrix/tox
+        steps:
+            - checkout
+            - run: tox
